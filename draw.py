@@ -15,28 +15,52 @@ def scanline_convert(polygons, i, screen, zbuffer ):
             points = polygons[point : point + 3]
             points.sort(key=lambda x: x[1])
             d0 = float(points[2][0] - points[0][0]) / (points[2][1] - points[0][1])
-            d1 = float(points)
-            draw_line( int(polygons[point][0]),
-                       int(polygons[point][1]),
-                       polygons[point][2],
-                       int(polygons[point+1][0]),
-                       int(polygons[point+1][1]),
-                       polygons[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(polygons[point+2][0]),
-                       int(polygons[point+2][1]),
-                       polygons[point+2][2],
-                       int(polygons[point+1][0]),
-                       int(polygons[point+1][1]),
-                       polygons[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(polygons[point][0]),
-                       int(polygons[point][1]),
-                       polygons[point][2],
-                       int(polygons[point+2][0]),
-                       int(polygons[point+2][1]),
-                       polygons[point+2][2],
-                       screen, zbuffer, color)
+            d1 = float(points[1][0] - points[0][0]) / (points[1][1] - points[0][1])
+            d2 = float(points[2][2] - points[0][2]) / (points[2][1] - points[0][1])
+            d3 = float(points[1][2] - points[0][2]) / (points[1][1] - points[0][1])
+            y = points[0][1]
+            x0 = points[0][0]
+            x1 = points[0][0]
+            z0 = points[0][2]
+            z1 = points[0][2]
+            while(y < points[1][1]):
+                draw_line(int(x0),
+                          int(z0),
+                          y,
+                          int(x1),
+                          int(z1),
+                          y,
+                          screen, zbuffer, color)
+                x0 += d0
+                x1 += d1
+                z0 += d2
+                z1 += d3
+                y += 1
+
+
+            d0 = float(points[1][0] - points[2][0]) / (points[1][1] - points[2][1])
+            d1 = float(points[0][0] - points[2][0]) / (points[0][1] - points[2][1])
+            d2 = float(points[1][2] - points[2][2]) / (points[1][1] - points[2][1])
+            d3 = float(points[0][2] - points[2][2]) / (points[0][1] - points[2][1])
+            y = points[2][1]
+            x0 = points[2][0]
+            x1 = points[2][0]
+            z0 = points[2][2]
+            z1 = points[2][2]
+            while(y > points[1][1]):
+                draw_line(int(x0),
+                          int(z0),
+                          y,
+                          int(x1),
+                          int(z1),
+                          y,
+                          screen, zbuffer, color)
+                x0 += d0
+                x1 += d1
+                z0 += d2
+                z1 += d3
+                y -= 1
+
         point+= 3
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
@@ -299,6 +323,7 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
 
     x = x0
     y = y0
+
     A = 2 * (y1 - y0)
     B = -2 * (x1 - x0)
     wide = False
@@ -340,7 +365,9 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
             loop_end = y
 
     while ( loop_start < loop_end ):
-        plot( screen, zbuffer, color, x, y, 0 )
+        if(y > zbuffer[int(x)][int(z0)]):
+            zbuffer[int(x)][int(z0)] = y
+            plot( screen, zbuffer, color, int(x), int(z0), 0 )
         if ( (wide and ((A > 0 and d > 0) or (A < 0 and d < 0))) or
              (tall and ((A > 0 and d < 0) or (A < 0 and d > 0 )))):
 
@@ -352,4 +379,6 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
             y+= dy_east
             d+= d_east
         loop_start+= 1
-    plot( screen, zbuffer, color, x, y, 0 )
+    if(y > zbuffer[int(x)][int(z0)]):
+        zbuffer[int(x)][int(z0)] = y
+        plot( screen, zbuffer, color, int(x), int(z0), 0 )
