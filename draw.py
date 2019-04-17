@@ -32,7 +32,8 @@ def scanline_convert(polygons, i, screen, zbuffer ):
                           y,
                           screen, zbuffer, color)
                 x0 += d0
-                x1 += d1
+                x1 += d1plot( screen, zbuffer, color, x, y, 0 )
+
                 z0 += d2
                 z1 += d3
                 y += 1
@@ -48,7 +49,8 @@ def scanline_convert(polygons, i, screen, zbuffer ):
             z0 = points[2][2]
             z1 = points[2][2]
             while(y > points[1][1]):
-                draw_line(int(x0),
+                draw_line(intplot( screen, zbuffer, color, x, y, 0 )
+(x0),
                           int(z0),
                           y,
                           int(x1),
@@ -61,7 +63,8 @@ def scanline_convert(polygons, i, screen, zbuffer ):
                 z1 += d3
                 y -= 1
 
-        point+= 3
+        point+= 3plot( screen, zbuffer, color, x, y, 0 )
+
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0)
@@ -77,7 +80,8 @@ def draw_polygons( polygons, screen, zbuffer, color ):
     while point < len(polygons) - 2:
 
         normal = calculate_normal(polygons, point)[:]
-        #print normal
+        #print normalplot( screen, zbuffer, color, x, y, 0 )
+
         if normal[2] > 0:
             draw_line( int(polygons[point][0]),
                        int(polygons[point][1]),
@@ -91,7 +95,8 @@ def draw_polygons( polygons, screen, zbuffer, color ):
                        polygons[point+2][2],
                        int(polygons[point+1][0]),
                        int(polygons[point+1][1]),
-                       polygons[point+1][2],
+                       polygoplot( screen, zbuffer, color, x, y, 0 )
+ns[point+1][2],
                        screen, zbuffer, color)
             draw_line( int(polygons[point][0]),
                        int(polygons[point][1]),
@@ -103,7 +108,8 @@ def draw_polygons( polygons, screen, zbuffer, color ):
         point+= 3
 
 
-def add_box( polygons, x, y, z, width, height, depth ):
+def add_box( polygons, x, y, plot( screen, zbuffer, color, x, y, 0 )
+z, width, height, depth ):
     x1 = x + width
     y1 = y - height
     z1 = z - depth
@@ -323,7 +329,6 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
 
     x = x0
     y = y0
-
     A = 2 * (y1 - y0)
     B = -2 * (x1 - x0)
     wide = False
@@ -365,9 +370,7 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
             loop_end = y
 
     while ( loop_start < loop_end ):
-        if(y > zbuffer[int(x)][int(z0)]):
-            zbuffer[int(x)][int(z0)] = y
-            plot( screen, zbuffer, color, int(x), int(z0), 0 )
+        plot( screen, zbuffer, color, x, y, 0 )
         if ( (wide and ((A > 0 and d > 0) or (A < 0 and d < 0))) or
              (tall and ((A > 0 and d < 0) or (A < 0 and d > 0 )))):
 
@@ -379,6 +382,4 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
             y+= dy_east
             d+= d_east
         loop_start+= 1
-    if(y > zbuffer[int(x)][int(z0)]):
-        zbuffer[int(x)][int(z0)] = y
-        plot( screen, zbuffer, color, int(x), int(z0), 0 )
+    plot( screen, zbuffer, color, x, y, 0 )
