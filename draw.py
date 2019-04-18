@@ -2,68 +2,63 @@ from display import *
 from matrix import *
 from gmath import *
 
-def scanline_convert(polygons, i, screen, zbuffer ):
+
+
+
+def scanline_convert(polygons, screen, zbuffer, color):
     if len(polygons) < 2:
         print 'Need at least 3 points to draw'
         return
 
     point = 0
     while point < len(polygons) - 2:
-
+        color = [ (1000 * point + 100) % 256, (1010 * point + 100) % 256, (1020 * point + 100) % 256]
         normal = calculate_normal(polygons, point)[:]
         if normal[2] > 0:
             points = polygons[point : point + 3]
+
             points.sort(key=lambda x: x[1])
-            d0 = float(points[2][0] - points[0][0]) / (points[2][1] - points[0][1])
-            d1 = float(points[1][0] - points[0][0]) / (points[1][1] - points[0][1])
-            d2 = float(points[2][2] - points[0][2]) / (points[2][1] - points[0][1])
-            d3 = float(points[1][2] - points[0][2]) / (points[1][1] - points[0][1])
+
             y = points[0][1]
             x0 = points[0][0]
             x1 = points[0][0]
             z0 = points[0][2]
             z1 = points[0][2]
+
             while(y < points[1][1]):
                 draw_line(int(x0),
+                          int(y),
                           int(z0),
-                          y,
                           int(x1),
+                          int(y),
                           int(z1),
-                          y,
                           screen, zbuffer, color)
-                x0 += d0
-                x1 += d1plot( screen, zbuffer, color, x, y, 0 )
+                x0 += (points[2][0] - points[0][0]) / (points[2][1] - points[0][1])
+                x1 += (points[1][0] - points[0][0]) / (points[1][1] - points[0][1])
+                z0 += (points[2][2] - points[0][2]) / (points[2][1] - points[0][1])
+                z1 += (points[1][2] - points[0][2]) / (points[1][1] - points[0][1])
+                y += 1
 
-                z0 += d2
-                z1 += d3
+            y = points[1][1]
+            x1 = points[1][0]
+            z1 = points[1][2]
+
+            while(y < points[2][1]):
+                draw_line(int(x0),
+                          int(y),
+                          int(z0),
+                          int(x1),
+                          int(y),
+                          int(z1),
+                          screen, zbuffer, color)
+                x0 += (points[2][0] - points[0][0]) / (points[2][1] - points[0][1])
+                x1 += (points[2][0] - points[1][0]) / (points[2][1] - points[1][1])
+                z0 += (points[2][2] - points[0][2]) / (points[2][1] - points[0][1])
+                z1 += (points[2][2] - points[1][2]) / (points[2][1] - points[1][1])
                 y += 1
 
 
-            d0 = float(points[1][0] - points[2][0]) / (points[1][1] - points[2][1])
-            d1 = float(points[0][0] - points[2][0]) / (points[0][1] - points[2][1])
-            d2 = float(points[1][2] - points[2][2]) / (points[1][1] - points[2][1])
-            d3 = float(points[0][2] - points[2][2]) / (points[0][1] - points[2][1])
-            y = points[2][1]
-            x0 = points[2][0]
-            x1 = points[2][0]
-            z0 = points[2][2]
-            z1 = points[2][2]
-            while(y > points[1][1]):
-                draw_line(intplot( screen, zbuffer, color, x, y, 0 )
-(x0),
-                          int(z0),
-                          y,
-                          int(x1),
-                          int(z1),
-                          y,
-                          screen, zbuffer, color)
-                x0 += d0
-                x1 += d1
-                z0 += d2
-                z1 += d3
-                y -= 1
-
-        point+= 3plot( screen, zbuffer, color, x, y, 0 )
+        point+= 3
 
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
@@ -95,8 +90,7 @@ def draw_polygons( polygons, screen, zbuffer, color ):
                        polygons[point+2][2],
                        int(polygons[point+1][0]),
                        int(polygons[point+1][1]),
-                       polygoplot( screen, zbuffer, color, x, y, 0 )
-ns[point+1][2],
+                       polygons[point+1][2],
                        screen, zbuffer, color)
             draw_line( int(polygons[point][0]),
                        int(polygons[point][1]),
@@ -108,8 +102,7 @@ ns[point+1][2],
         point+= 3
 
 
-def add_box( polygons, x, y, plot( screen, zbuffer, color, x, y, 0 )
-z, width, height, depth ):
+def add_box( polygons, x, y, z, width, height, depth ):
     x1 = x + width
     y1 = y - height
     z1 = z - depth
@@ -313,7 +306,6 @@ def add_edge( matrix, x0, y0, z0, x1, y1, z1 ):
 
 def add_point( matrix, x, y, z=0 ):
     matrix.append( [x, y, z, 1] )
-
 
 
 def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):

@@ -6,8 +6,8 @@ rotate
 y 20
 rotate
 x 20
-box
-0 0 0 200 100 400
+sphere
+0 0 0 200
 display
 save
 img.png
